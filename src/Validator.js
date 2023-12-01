@@ -15,6 +15,20 @@ const CodeValidator = () => {
     { regex: /^\s*}\s*$/, message: "Cierre de bloque no válido." }
     ];
 
+    const grammar = {
+        'S': [['N', 'C1']],
+        'C1': [['O', 'V']],
+        'N': [['L', 'N'], ['L', 'D']],
+        'V': [['D', 'D'], ['D', 'C4'], ['C', 'C5']],
+        'C2': [['D', 'D'], ['D', 'C4']],
+        'C5': [['L', 'C']],
+        'O': [/\s*=$/], // Definir otros operadores si es necesario
+        'L': [/^[0-9]$/],
+        'D': [['0'], ['1'], ['2'], /* ... otros dígitos de '0' a '9' ... */ ],
+        'P': [['.']],
+        'C': [['"']]
+    };
+    
     const validateBrackets = (codeToValidate) => {
         const stack = [];
         const lines = codeToValidate.split('\n');
@@ -74,10 +88,54 @@ const CodeValidator = () => {
         setErrors(newErrors);
 
     };
+    
+    const isTerminal = (symbol) => {
+        switch (symbol) {
+            case 'L':
+                return /^[a-z]$/; // Coincide con cualquier letra minúscula
+            case 'D':
+                return /^[0-9]$/; // Coincide con cualquier dígito
+            default:
+                return new RegExp(`^${symbol}$`); // Coincide exactamente con el símbolo
+        }
+    };
+    
+    const processRule = (stack, code, index) => {
+        let top = stack.pop();
+        let regex = isTerminal(top);
+    
+        if (regex.test(code[index])) {
+            return [stack, index + 1, null];
+        } else {
+            return [stack, index, `Error: se esperaba '${top}' en la posición ${index}`];
+        }
+    };
+    
+    const validateCodeWithAutomata = (codeToValidate) => {
+        let stack = ['O'];
+        let index = 0;
+        let newErrors = {};
+
+        while (stack.length > 0 && index < codeToValidate.length) {
+            let error;
+            [stack, index, error] = processRule(stack, codeToValidate, index);
+            if (error) {
+                newErrors[index] = error;
+                break; // Detener en el primer error por simplicidad
+            }
+        }
+
+        if (stack.length > 0 || index < codeToValidate.length) {
+            newErrors['general'] = 'El código no se pudo validar completamente.';
+        }
+
+        setErrors(newErrors);
+    };
+
     const handleCodeChange = (event) => {
         const newCode = event.target.value;
         setCode(newCode);
-        validateCode(newCode);
+        validateCodeWithAutomata(newCode);
     };
 
     return (
