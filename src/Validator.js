@@ -1,167 +1,167 @@
-import React, { useState } from 'react';
-import './index.css'
+class ValidateFNC {
+    constructor() {
+        this.stack = ['$'];
+        this.states = []
+    }
 
-const CodeValidator = () => {
-    const [code, setCode] = useState('');
-    const [errors, setErrors] = useState({});
-    const [isValid, setIsValid] = useState(true);
+    validate(input) {
 
-    const rules = [
-    { regex: /^\s*[\w]+\s*=\s*\d+\s*\s*$/, message: "La asignación no es válida." },
-    { regex: /^\s*public\s+fnc\s+(main|[a-z|A-Z])+\(\)\s*{\s*$/, message: "La definición de la función no es válida." },
-    { regex: /^\s*si\s*\(\s*\w+\s*[<>=!]=?\s*\w+\s*\)\s*{\s*$/, message: "La estructura de control 'si' no es válida." },
-    { regex: /^\s*for\s+\w+\s*=\s*0;\s*\w+\s*<\s*\d+\s*;\s*\w+\+\+\s*{\s*$/, message: "El bucle 'for' no es válido." },
-    { regex: /^\s*impr\(".*"\)\s*$/, message: "La instrucción de impresión no es válida." },
-    { regex: /^\s*}\s*$/, message: "Cierre de bloque no válido." }
-    ];
+        this.add(['S']);
+        let pointer = 0;
 
-    const grammar = {
-        'S': [['N', 'C1']],
-        'C1': [['O', 'V']],
-        'N': [['L', 'N'], ['L', 'D']],
-        'V': [['D', 'D'], ['D', 'C4'], ['C', 'C5']],
-        'C2': [['D', 'D'], ['D', 'C4']],
-        'C5': [['L', 'C']],
-        'O': [/\s*=$/], // Definir otros operadores si es necesario
-        'L': [/^[0-9]$/],
-        'D': [['0'], ['1'], ['2'], /* ... otros dígitos de '0' a '9' ... */ ],
-        'P': [['.']],
-        'C': [['"']]
-    };
-    
-    const validateBrackets = (codeToValidate) => {
-        const stack = [];
-        const lines = codeToValidate.split('\n');
-    
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
-    
-          for (let j = 0; j < line.length; j++) {
-            const char = line[j];
-    
-            if (char === '{') {
-              stack.push({ line: i + 1, char: j + 1 });
-            } else if (char === '}') {
-              if (stack.length === 0) {
-                return `Error: Llave de cierre sin correspondencia en la línea ${i + 1}, columna ${j + 1}`;
-              }
-              stack.pop();
+        while (true) {
+            console.log(this.stack);
+            this.states.push([...this.stack]);
+            const stackTop = this.topOfStack();
+            const inputSymbol = input[pointer];
+
+            if (stackTop === '$' && inputSymbol === undefined) {
+                return { isValid: true, stack: this.states };
             }
-          }
-        }
-    
-        if (stack.length > 0) {
-          const lastUnclosed = stack.pop();
-          return `Error: Llave de apertura en la línea ${lastUnclosed.line}, columna ${lastUnclosed.char} sin cierre correspondiente`;
-        }
-    
-        return null; // No hay errores de llaves.
-      };
 
-    const validateLine = (line, lineNumber) => {
-        for (let rule of rules) {
-            if (rule.regex.test(line.trim())) {
-            return null;
+            if (stackTop.length > 1 && this.isTerminal(stackTop)) {
+                for (let i = 0; i < stackTop.length - 1; i++) {
+                    if (stackTop[i] === input[pointer]) {
+                    } else {
+                        break;
+                    }
+                    this.remove();
+                    pointer += stackTop.length;
+                }
+            } else if (stackTop === inputSymbol) {
+                this.remove();
+                pointer++;
+            } else {
+                const production = this.getProduction(stackTop, inputSymbol);
+                if (production) {
+                    this.remove();
+                    this.add(production);
+                } else {
+                    return { isValid: false, stack: this.states };
+                }
             }
         }
-        return `Error en la línea ${lineNumber}: Sintaxis no reconocida. "${line.trim()}"`;
-    };
+    }
 
-    const validateCode = (codeToValidate) => {
-    const lines = codeToValidate.split('\n');
-    const newErrors = {};
-    let hasBracketError = false;
-    
-    lines.forEach((line, index) => {
-        const error = validateLine(line, index + 1);
-        if (error) {
-            newErrors[index] = error;
+    add(symbols) {
+        for (let i = symbols.length - 1; i >= 0; i--) {
+            this.stack.push(symbols[i]);
         }
-    });
+    }
 
-    const bracketError = validateBrackets(codeToValidate);
-        if (bracketError) {
-            newErrors['brackets'] = bracketError;
-            hasBracketError = true;
+    remove() {
+        return this.stack.pop();
+    }
+
+    topOfStack() {
+        return this.stack[this.stack.length - 1];
+    }
+
+    isTerminal(symbol) {
+        return symbol === symbol.toLowerCase();
+    }
+
+
+    getProduction(nonTerminal, terminal) {
+        const ruleMappings = {
+            'S': () => {
+                const mappings = {
+                    'v': () => ['L1', 'V1'],
+                    'p': () => ['F', 'A1'],
+                    'f': () => ['Y', 'T1'],
+                    't': () => ['LL', 'B4']
+                };
+                return mappings[terminal] ? mappings[terminal]() : null;
+            },
+
+            // Variables
+            'V1': () => ['O', 'V'],
+            'V': () => {
+                if (/[a-zA-Z]/.test(terminal)) {
+                    return ['L']
+                } else if (/[0-9]/.test(terminal)) {
+                    return ['D']
+                }
+                else {
+                    return ' '
+                }
+            },
+
+            // Funciones
+            'B4': () => ['T', 'B6'],
+            'B6': () => ['CA', 'CR'],
+
+            // Main
+            'A1': () => ['T', 'A2'],
+            'A2': () => ['CA', 'A3'],
+            'A3': () => ['C', 'CR'],
+            'C': () => ['U', 'C1'],
+            'C1': () => ['PA', 'C2'],
+            'C2': () => ['RC', 'C3'],
+            'C3': () => ['PC', 'C4'],
+            'C4': () => ['CA', 'C5'],
+            'C5': () => ['I', 'CR'],
+            'RC': () => ['RC1', 'D'],
+            'RC1': () => ['D', 'CC'],
+            'I': () => ['I1', 'I2'],
+            'I2': () => ['PA', 'I3'],
+            'I3': () => ['H', 'I4'],
+            'I4': () => ['L', 'I5'],
+            'I5': () => ['H', 'PC'],
+
+            // Ciclo
+            'T1': () => ['PA', 'R1'],
+            'R1': () => ['KD', 'R2'],
+            'R2': () => ['KA', 'R3'],
+            'KA': () => ['D', 'KA1'],
+            'KA1': () => ['CC', 'D'],
+            'R3': () => ['KS', 'R4'],
+            'R4': () => ['PC', 'J'],
+            'J': () => ['CA', 'J3'],
+            'J3': () => ['I1', 'J4'],
+            'J4': () => ['PA', 'J5'],
+            'J5': () => ['H', 'J6'],
+            'J6': () => ['L', 'J7'],
+            'J7': () => ['H', 'J8'],
+            'J8': () => ['PC', 'CR'],
+
+            // Operadores
+            'CC': () => ['<'],
+
+            // Reservadas
+            'F': () => ['public fnc main'],
+            'I1': () => ['impr'],
+            'U': () => ['si '],
+            'Y': () => ['for '],
+
+            // Formación
+            'L': () => /[a-zA-Z]/.test(terminal) ? [terminal] : ' ',
+            'D': () => /[0-9]/.test(terminal) ? [terminal] : ' ',
+            'L1': () => ['v'],
+            'LL': () => ['t'],
+
+            // Símbolos
+            'O': () => ['='],
+            'H': () => ['"'],
+            'T': () => ['()'],
+            'CA': () => ['{'],
+            'CR': () => ['}'],
+            'PA': () => ['('],
+            'PC': () => [')'],
+            'KD': () => ['i=0; '],
+            'KS': () => ['i++ '],
         }
+        return ruleMappings[nonTerminal] ? ruleMappings[nonTerminal]() : null;
+    }
 
-        setErrors(newErrors);
 
-    };
-    
-    const isTerminal = (symbol) => {
-        switch (symbol) {
-            case 'L':
-                return /^[a-z]$/; // Coincide con cualquier letra minúscula
-            case 'D':
-                return /^[0-9]$/; // Coincide con cualquier dígito
-            default:
-                return new RegExp(`^${symbol}$`); // Coincide exactamente con el símbolo
-        }
-    };
-    
-    const processRule = (stack, code, index) => {
-        let top = stack.pop();
-        let regex = isTerminal(top);
-    
-        if (regex.test(code[index])) {
-            return [stack, index + 1, null];
-        } else {
-            return [stack, index, `Error: se esperaba '${top}' en la posición ${index}`];
-        }
-    };
-    
-    const validateCodeWithAutomata = (codeToValidate) => {
-        let stack = ['O'];
-        let index = 0;
-        let newErrors = {};
+}
 
-        while (stack.length > 0 && index < codeToValidate.length) {
-            let error;
-            [stack, index, error] = processRule(stack, codeToValidate, index);
-            if (error) {
-                newErrors[index] = error;
-                break; // Detener en el primer error por simplicidad
-            }
-        }
+const automaton = new ValidateFNC();
+const result = automaton.validate('si suma > 4 realizar { suma - 2 ; }');
 
-        if (stack.length > 0 || index < codeToValidate.length) {
-            newErrors['general'] = 'El código no se pudo validar completamente.';
-        }
-
-        setErrors(newErrors);
-    };
-
-    const handleCodeChange = (event) => {
-        const newCode = event.target.value;
-        setCode(newCode);
-        validateCodeWithAutomata(newCode);
-    };
-
-    return (
-        <div className='app'>
-            <h1 className='header'>grntScript</h1>
-            <textarea
-                className={`${isValid ? 'textarea' : 'textarea-invalid'}`}
-                value={code}
-                onChange={handleCodeChange}
-                placeholder="Escribe tu código aquí..."
-            />
-            <div style={{ marginLeft: '20px' }}>
-                {Object.keys(errors).length > 0 ? (
-                    <ul className='error-message'>
-                    {Object.values(errors).map((error, index) => (
-                        <li key={index} >
-                            {error}
-                        </li>
-                    ))}
-                    </ul>
-                ) : (
-                <p className='valid-message'>El código es válido.</p>
-                )}
-            </div>
-        </div>
-    );
-};
-
-export default CodeValidator;
+export default function validateAutomaton(inputString) {
+    const automaton = new ValidateFNC();
+    const result = automaton.validate(inputString);
+    return result;
+}
