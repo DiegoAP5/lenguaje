@@ -137,7 +137,7 @@ class ValidateFNC {
             // Formación
             'L': () => /[a-zA-Z]/.test(terminal) ? [terminal] : ' ',
             'D': () => /[0-9]/.test(terminal) ? [terminal] : ' ',
-            'L1': () => ['v'],
+            'L1': () => ['v '],
             'LL': () => ['t'],
 
             // Símbolos
