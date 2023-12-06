@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useState } from "react";
-import validateAutomaton from "./Validator";
+import stack from "./Validator";
 import CodeMirror from "@uiw/react-codemirror";
 import icono from './assets/reproducir.png'
 
@@ -11,7 +11,7 @@ function App() {
   const [isValid, setIsValid] = useState(undefined);
 
   const submitInputString = () => {
-    const result = validateAutomaton(code);
+    const result = stack(code);
     setStacks(result.stack)
     setIsValid(result.isValid);
   }

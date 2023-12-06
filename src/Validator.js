@@ -1,4 +1,4 @@
-class ValidateFNC {
+class Validator {
     constructor() {
         this.stack = ['$'];
         this.states = []
@@ -184,11 +184,8 @@ class ValidateFNC {
 
 }
 
-const automaton = new ValidateFNC();
-const result = automaton.validate('si suma > 4 realizar { suma - 2 ; }');
-
-export default function validateAutomaton(inputString) {
-    const automaton = new ValidateFNC();
-    const result = automaton.validate(inputString);
+export default function stack(inputString) {
+    const automata = new Validator();
+    const result = automata.validate(inputString);
     return result;
 }
