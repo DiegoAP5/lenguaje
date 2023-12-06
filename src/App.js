@@ -1,8 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
 import React, { useState } from "react";
 import validateAutomaton from "./Validator";
 import CodeMirror from "@uiw/react-codemirror";
+import icono from './assets/reproducir.png'
 
 function App() {
 
@@ -19,20 +19,25 @@ function App() {
   return (
     <div className='app'>
         <h1 className='header'>grntScript</h1>
-        <CodeMirror
-            value={code}
-            height="400px"
-            width="880px"
-            onChange={(editor,) => {
-              setCode(editor);
-            }}
-          />
+        <div className={`input-container ${isValid ? 'valid' : 'invalid'}`}>
+            <CodeMirror
+              className='input'
+              value={code}
+              height="400px"
+              width="880px"
+              onChange={(editor,) => {
+                setCode(editor);
+              }}
+            />
+        </div>
+        
         <button
+        className='btn'
           onClick={submitInputString}
         >
-          Validar
+          <img src={icono} alt="Reproducir" />
         </button>
-        <h2 className="pilaTitle">Estados de la pila ↓ {
+        <h2 className="pilaTitle">Cadena {
           isValid === undefined ? null :  isValid ? <span className="message correct">Cadena válida</span> : <span className="message failed">Error en sintaxis</span>
         }</h2>
         <div className="stacksContainer">

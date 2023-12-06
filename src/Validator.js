@@ -74,24 +74,26 @@ class ValidateFNC {
                 return mappings[terminal] ? mappings[terminal]() : null;
             },
 
-            // Variables
+            // Variables v =2 v =a
             'V1': () => ['O', 'V'],
             'V': () => {
-                if (/[a-zA-Z]/.test(terminal)) {
+                if(terminal !== undefined){
+                    if (/[a-zA-Z]/.test(terminal)) {
                     return ['L']
-                } else if (/[0-9]/.test(terminal)) {
-                    return ['D']
+                    } else if (/[0-9]/.test(terminal)) {
+                        return ['D']
+                    }
                 }
-                else {
+                else{
                     return ' '
                 }
             },
 
-            // Funciones
+            // Funciones t(){}
             'B4': () => ['T', 'B6'],
             'B6': () => ['CA', 'CR'],
 
-            // Main
+            // Main public fnc main(){si (3<5){impr("s")}}
             'A1': () => ['T', 'A2'],
             'A2': () => ['CA', 'A3'],
             'A3': () => ['C', 'CR'],
@@ -109,7 +111,7 @@ class ValidateFNC {
             'I4': () => ['L', 'I5'],
             'I5': () => ['H', 'PC'],
 
-            // Ciclo
+            // Ciclo for(i=0;4<5;i++){impr("s")}
             'T1': () => ['PA', 'R1'],
             'R1': () => ['KD', 'R2'],
             'R2': () => ['KA', 'R3'],
@@ -125,31 +127,56 @@ class ValidateFNC {
             'J7': () => ['H', 'J8'],
             'J8': () => ['PC', 'CR'],
 
-            // Operadores
+
+            //terminales
             'CC': () => ['<'],
-
-            // Reservadas
-            'F': () => ['public fnc main'],
-            'I1': () => ['impr'],
+            'F': () => {
+                if(!/^public\s+fnc\s+main$/.test(terminal)){
+                    return ['public fnc main']
+                }else{
+                    return [' ']
+                }
+            },
+            'I1': () => {
+                if(/^i$/.test(terminal)){
+                    return ['impr']
+                }else{
+                    return [' ']
+                }
+            },
             'U': () => ['si '],
-            'Y': () => ['for '],
-
-            // Formación
+            'Y': () => {
+                if(!/^for$/.test(terminal)){
+                    return ['for']
+                }else{
+                    return [' ']
+                }
+            },
             'L': () => /[a-zA-Z]/.test(terminal) ? [terminal] : ' ',
             'D': () => /[0-9]/.test(terminal) ? [terminal] : ' ',
             'L1': () => ['v '],
             'LL': () => ['t'],
-
-            // Símbolos
             'O': () => ['='],
             'H': () => ['"'],
-            'T': () => ['()'],
+            'T': () => {
+                if(/^(\(|\))*$/.test(terminal)){
+                    return ['()']
+                }else{
+                    return [' ']
+                }
+            },
             'CA': () => ['{'],
             'CR': () => ['}'],
             'PA': () => ['('],
             'PC': () => [')'],
-            'KD': () => ['i=0; '],
-            'KS': () => ['i++ '],
+            'KD': () => ['i=0;'],
+            'KS': () => {
+                if(/^;$/.test(terminal)){
+                    return [';i++']
+                }else{
+                    return [' ']
+                }
+            },
         }
         return ruleMappings[nonTerminal] ? ruleMappings[nonTerminal]() : null;
     }
