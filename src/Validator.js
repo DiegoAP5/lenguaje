@@ -74,8 +74,9 @@ class Validator {
                 return mappings[terminal] ? mappings[terminal]() : null;
             },
 
-            // Variables v =2 v =a
-            'V1': () => ['O', 'V'],
+            // Variables var a = 2 var b = a
+            'V1': () => ['L', 'V2'],
+            'V2': () => ['O', 'V'],
             'V': () => {
                 if(terminal !== undefined){
                     if (/[a-zA-Z]/.test(terminal)) {
@@ -129,6 +130,7 @@ class Validator {
 
 
             //terminales
+            'L1': () => ['var'],
             'CC': () => ['<'],
             'F': () => {
                 if(!/^public\s+fnc\s+main$/.test(terminal)){
