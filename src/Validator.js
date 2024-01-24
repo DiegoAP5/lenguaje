@@ -1,193 +1,146 @@
 class Validator {
-    constructor() {
-        this.stack = ['$'];
-        this.states = []
-    }
 
-    validate(input) {
+  grammar = [
+    {
+      rule: /^var$/,
+      type: "variable_definition_keyword",
+      description: "Palabra reservada para declaración de variables.",
+    },
+    {
+      rule: /^fnc$/,
+      type: "function_definition_keyword",
+      description: "Palabra reservada para definición de función.",
+    },
+    {
+      rule: /^public$/,
+      type: "public_access_keyword",
+      description: "Palabra reservada para declarar acceso público.",
+    },
+    {
+      rule: /^si$/,
+      type: "if_statement_keyword",
+      description: "Palabra reservada para condicional if.",
+    },
+    {
+      rule: /^impr$/,
+      type: "output_print",
+      description: "Instrucción de impresión por pantalla.",
+    },
+    {
+      rule: /^for$/,
+      type: "for_loop_keyword",
+      description: "Palabra reservada para ciclos for.",
+    },
+    {
+      rule: /^=$/,
+      type: "asignation_symbol",
+      description: "Símbolo de asignación de valor.",
+    },
+    {
+      rule: /^[a-zA-Z][a-zA-Z0-9]*$/,
+      type: "entity_name",
+      description: "Nombre válido para funciones y variables.",
+    },
+    {
+      rule: /^\d+$/,
+      type: "integer_number",
+      description: "Número entero.",
+    },
+    {
+      rule: /^\($/,
+      type: "open_parentheses_symbol",
+      description: "Símbolo de apertura de paréntesis.",
+    },
+    {
+      rule: /^\)$/,
+      type: "close_parentheses_symbol",
+      description: "Símbolo de cierre de paréntesis.",
+    },
+    {
+      rule: /^\{$/,
+      type: "open_brackets_symbol",
+      description: "Símbolo de apertura de corchete.",
+    },
+    {
+      rule: /^\}$/,
+      type: "close_brackets_symbol",
+      description: "Símbolo de cierre de corchete.",
+    },
+    {
+      rule: /^;$/,
+      type: "delimiter_semicolor",
+      description: "Símbolo de delimitación, punto y coma.",
+    },
+    {
+      rule: /^\+\+$/,
+      type: "increment_symbol",
+      description: "Símbolo de cierre de corchete.",
+    },
+    {
+      rule: /^\>$/,
+      type: "greater_than_symbol",
+      description: "Símbolo de mayor que.",
+    },
+    {
+      rule: /^\<$/,
+      type: "less_than_symbol",
+      description: "Símbolo de menor que.",
+    },
+    {
+      rule: /^("|')$/,
+      type: "indistinct_comilla_symbol",
+      description: "Símbolo de comilla indistinto.",
+    },
+    {
+      rule: /^“$/,
+      type: "open_comilla_symbol",
+      description: "Símbolo de apertura de comilla.",
+    },
+    {
+      rule: /^”$/,
+      type: "close_comilla_symbol",
+      description: "Símbolo de cierre de comilla.",
+    },
+  ];
 
-        this.add(['S']);
-        let pointer = 0;
+  validate(input) {
+    let code_in_lexems = input
+      .replace(/\s+/g, " ")
+      .replace(/(:|{|}|,|\(|\)|;|>|<|==|=|!=|\+\+|--|"|“|”|'|\+)/g, " $1 ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .filter((token) => token !== "");
 
-        while (true) {
-            console.log(this.stack);
-            this.states.push([...this.stack]);
-            const stackTop = this.topOfStack();
-            const inputSymbol = input[pointer];
+    let result = this.check_in_grammar(code_in_lexems);
+    return result;
+  }
 
-            if (stackTop === '$' && inputSymbol === undefined) {
-                return { isValid: true, stack: this.states };
-            }
+  check_in_grammar(lexems) {
+    const result = [];
 
-            if (stackTop.length > 1 && this.isTerminal(stackTop)) {
-                for (let i = 0; i < stackTop.length - 1; i++) {
-                    if (stackTop[i] === input[pointer]) {
-                    } else {
-                        break;
-                    }
-                    this.remove();
-                    pointer += stackTop.length;
-                }
-            } else if (stackTop === inputSymbol) {
-                this.remove();
-                pointer++;
-            } else {
-                const production = this.getProduction(stackTop, inputSymbol);
-                if (production) {
-                    this.remove();
-                    this.add(production);
-                } else {
-                    return { isValid: false, stack: this.states };
-                }
-            }
+    for (const lexem of lexems) {
+      let lexemFound = false;
+
+      for (const rule of this.grammar) {
+        if (rule.rule.test(lexem)) {
+          result.push([lexem, rule.type, rule.description, true]);
+          lexemFound = true;
+          break;
         }
+      }
+
+      if (!lexemFound) {
+        result.push([lexem, "Unknown", "Sin coincidencia", false]);
+      }
     }
 
-    add(symbols) {
-        for (let i = symbols.length - 1; i >= 0; i--) {
-            this.stack.push(symbols[i]);
-        }
-    }
-
-    remove() {
-        return this.stack.pop();
-    }
-
-    topOfStack() {
-        return this.stack[this.stack.length - 1];
-    }
-
-    isTerminal(symbol) {
-        return symbol === symbol.toLowerCase();
-    }
-
-
-    getProduction(nonTerminal, terminal) {
-        const ruleMappings = {
-            'S': () => {
-                const mappings = {
-                    'v': () => ['L1', 'V1'],
-                    'p': () => ['F', 'A1'],
-                    'f': () => ['Y', 'T1'],
-                    't': () => ['LL', 'B4']
-                };
-                return mappings[terminal] ? mappings[terminal]() : null;
-            },
-
-            // Variables var a = 2 var b = a
-            'V1': () => ['L', 'V2'],
-            'V2': () => ['O', 'V'],
-            'V': () => {
-                if(terminal !== undefined){
-                    if (/[a-zA-Z]/.test(terminal)) {
-                    return ['L']
-                    } else if (/[0-9]/.test(terminal)) {
-                        return ['D']
-                    }
-                }
-                else{
-                    return ' '
-                }
-            },
-
-            // Funciones t(){}
-            'B4': () => ['T', 'B6'],
-            'B6': () => ['CA', 'CR'],
-
-            // Main public fnc main(){si (3<5){impr("s")}}
-            'A1': () => ['T', 'A2'],
-            'A2': () => ['CA', 'A3'],
-            'A3': () => ['C', 'CR'],
-            'C': () => ['U', 'C1'],
-            'C1': () => ['PA', 'C2'],
-            'C2': () => ['RC', 'C3'],
-            'C3': () => ['PC', 'C4'],
-            'C4': () => ['CA', 'C5'],
-            'C5': () => ['I', 'CR'],
-            'RC': () => ['RC1', 'D'],
-            'RC1': () => ['D', 'CC'],
-            'I': () => ['I1', 'I2'],
-            'I2': () => ['PA', 'I3'],
-            'I3': () => ['H', 'I4'],
-            'I4': () => ['L', 'I5'],
-            'I5': () => ['H', 'PC'],
-
-            // Ciclo for(i=0;4<5;i++){impr("s")}
-            'T1': () => ['PA', 'R1'],
-            'R1': () => ['KD', 'R2'],
-            'R2': () => ['KA', 'R3'],
-            'KA': () => ['D', 'KA1'],
-            'KA1': () => ['CC', 'D'],
-            'R3': () => ['KS', 'R4'],
-            'R4': () => ['PC', 'J'],
-            'J': () => ['CA', 'J3'],
-            'J3': () => ['I1', 'J4'],
-            'J4': () => ['PA', 'J5'],
-            'J5': () => ['H', 'J6'],
-            'J6': () => ['L', 'J7'],
-            'J7': () => ['H', 'J8'],
-            'J8': () => ['PC', 'CR'],
-
-
-            //terminales
-            'L1': () => ['var'],
-            'CC': () => ['<'],
-            'F': () => {
-                if(!/^public\s+fnc\s+main$/.test(terminal)){
-                    return ['public fnc main']
-                }else{
-                    return [' ']
-                }
-            },
-            'I1': () => {
-                if(/^i$/.test(terminal)){
-                    return ['impr']
-                }else{
-                    return [' ']
-                }
-            },
-            'U': () => ['si '],
-            'Y': () => {
-                if(!/^for$/.test(terminal)){
-                    return ['for']
-                }else{
-                    return [' ']
-                }
-            },
-            'L': () => /[a-zA-Z]/.test(terminal) ? [terminal] : ' ',
-            'D': () => /[0-9]/.test(terminal) ? [terminal] : ' ',
-            'L1': () => ['v '],
-            'LL': () => ['t'],
-            'O': () => ['='],
-            'H': () => ['"'],
-            'T': () => {
-                if(/^(\(|\))*$/.test(terminal)){
-                    return ['()']
-                }else{
-                    return [' ']
-                }
-            },
-            'CA': () => ['{'],
-            'CR': () => ['}'],
-            'PA': () => ['('],
-            'PC': () => [')'],
-            'KD': () => ['i=0;'],
-            'KS': () => {
-                if(/^;$/.test(terminal)){
-                    return [';i++']
-                }else{
-                    return [' ']
-                }
-            },
-        }
-        return ruleMappings[nonTerminal] ? ruleMappings[nonTerminal]() : null;
-    }
-
-
+    return result;
+  }
 }
 
 export default function stack(inputString) {
-    const automata = new Validator();
-    const result = automata.validate(inputString);
-    return result;
+  const automata = new Validator();
+  const result = automata.validate(inputString);
+  return result;
 }

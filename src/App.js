@@ -11,9 +11,7 @@ function App() {
   const [isValid, setIsValid] = useState(undefined);
 
   const submitInputString = () => {
-    const result = stack(code);
-    setStacks(result.stack)
-    setIsValid(result.isValid);
+    setStacks(stack(code));
   }
 
   return (
@@ -41,13 +39,33 @@ function App() {
           isValid === undefined ? null :  isValid ? <span className="message correct">Cadena válida</span> : <span className="message failed">Error en sintaxis</span>
         }</h2>
         <div className="stacksContainer">
-          {stacks.map((stack, index) => (
-            <div className="stack" key={index}>
-              {stack.map((element, elementIndex) => (
-                <div className="element" key={elementIndex}>{element}</div>
-              ))}
-            </div>
-          ))}
+          <table>
+            <tbody>
+              <tr>
+                <th>Lexema</th>
+                <th>Token</th>
+                <th>Descripción</th>
+              </tr>
+          {
+            stacks.map((element)=>{
+              return (
+
+                <tr className={!element[3] ? "error" : ""}>
+                  <td>
+                    {element[0]}
+                  </td>
+                  <td>
+                    {element[1]}
+                  </td>
+                  <td>
+                    {element[2]}
+                  </td>
+                </tr>
+                )
+              })
+            }
+            </tbody>
+          </table>
         </div>
     </div>
 );
