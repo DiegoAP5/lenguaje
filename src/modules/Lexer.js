@@ -1,6 +1,6 @@
-class Validator {
+class Lexer {
 
-  grammar = [
+  symbols = [
     {
       rule: /^var$/,
       type: "variable_definition_keyword",
@@ -104,34 +104,39 @@ class Validator {
   ];
 
   validate(input) {
-    let code_in_lexems = input
-      .replace(/\s+/g, " ")
-      .replace(/(:|{|}|,|\(|\)|;|>|<|==|=|!=|\+\+|--|"|“|”|'|\+)/g, " $1 ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .split(" ")
-      .filter((token) => token !== "");
 
-    let result = this.check_in_grammar(code_in_lexems);
-    return result;
+    let code_sample = input.split("\n")
+    let res = []
+
+    for (let i in code_sample) {
+      let current_line = code_sample[i].replace(/\s+/g, " ")
+        .replace(/(:|{|}|,|\(|\)|;|>|<|==|=|!=|\+\+|--|"|“|”|'|\+)/g, " $1 ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .filter((token) => token.trim() !== "");
+      res = res.concat(this.check_in_grammar(current_line, i))
+    }
+
+    return res;
   }
 
-  check_in_grammar(lexems) {
+  check_in_grammar(lexems, line_number) {
+    line_number = parseInt(line_number)
     const result = [];
-
     for (const lexem of lexems) {
       let lexemFound = false;
 
-      for (const rule of this.grammar) {
+      for (const rule of this.symbols) {
         if (rule.rule.test(lexem)) {
-          result.push([lexem, rule.type, rule.description, true]);
+          result.push([lexem, rule.type, rule.description, true, line_number + 1]);
           lexemFound = true;
           break;
         }
       }
 
       if (!lexemFound) {
-        result.push([lexem, "Unknown", "Sin coincidencia", false]);
+        result.push([lexem, "Unknown", "Sin coincidencia", false, line_number + 1]);
       }
     }
 
@@ -140,7 +145,7 @@ class Validator {
 }
 
 export default function stack(inputString) {
-  const automata = new Validator();
+  const automata = new Lexer();
   const result = automata.validate(inputString);
   return result;
 }
