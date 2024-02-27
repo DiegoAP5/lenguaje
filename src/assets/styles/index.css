@@ -1,3 +1,42 @@
+body {
+  margin: 0px;
+}
+
+div.stacksContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 16px;
+  flex-direction: column-reverse;
+}
+
+p.outconsole {
+  font-size: 15px;
+  background: black;
+  width: calc(40vw - 16px* 2);
+  padding: 16px;
+  margin: 0;
+  font-family: monospace;
+}
+
+p.outconsole::before {
+  font-size: 15px;
+  content: "Output: ";
+  font-weight: 600;
+  margin-right: 7px;
+  display: inline-block;
+  color: rgb(252, 252, 252);
+}
+
+p.outconsole.success {
+  color: rgb(32, 209, 32);
+}
+
+p.outconsole.error {
+  color: rgb(209, 32, 32);
+}
+
 .app {
   background-color: #1e1e1e;
   color: #dcdcdc;
@@ -50,29 +89,29 @@
   font: bold;
 }
 
-div.stacksContainer > table {
+div.stacksContainer>table {
   width: 40vw;
   text-align: left;
   margin-bottom: 30px;
 }
 
-div.stacksContainer > table >tbody > tr > th{
+div.stacksContainer>table>tbody>tr>th {
   background-color: rgb(49, 58, 93);
 }
 
-div.stacksContainer > table >tbody > tr > td{
+div.stacksContainer>table>tbody>tr>td {
   padding: 10px 5px;
   font-size: 16px;
 }
 
-div.stacksContainer > table >tbody > tr:nth-child(even) > td{
+div.stacksContainer>table>tbody>tr:nth-child(even)>td {
   background-color: rgb(53, 56, 69);
 }
 
-div.stacksContainer > table >tbody > tr.error > td{
-  background-color: rgb(208, 52, 52)!important;
+div.stacksContainer>table>tbody>tr.error>td {
+  background-color: rgb(208, 52, 52) !important;
 }
 
-div.stacksContainer > table >tbody > tr:nth-child(odd) > td{
+div.stacksContainer>table>tbody>tr:nth-child(odd)>td {
   background-color: rgb(44, 40, 61);
 }

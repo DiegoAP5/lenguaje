@@ -1,0 +1,142 @@
+[
+    {
+        "rule": "^var$",
+        "type": "variable_definition_keyword",
+        "description": "Palabra reservada para declaración de variables.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^fnc$",
+        "type": "function_definition_keyword",
+        "description": "Palabra reservada para definición de función.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^public$",
+        "type": "public_access_keyword",
+        "description": "Palabra reservada para declarar acceso público.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^si$",
+        "type": "if_statement_keyword",
+        "description": "Palabra reservada para condicional if.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^impr$",
+        "type": "output_print",
+        "description": "Instrucción de impresión por pantalla.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^for$",
+        "type": "for_loop_keyword",
+        "description": "Palabra reservada para ciclos for.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^=$",
+        "type": "asignation_symbol",
+        "description": "Símbolo de asignación de valor.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^[a-zA-Z][a-zA-Z0-9]*$",
+        "type": "entity_name",
+        "description": "Nombre válido para funciones y variables.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^\\d+$",
+        "type": "integer_number",
+        "description": "Número entero.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^\\($",
+        "type": "open_parentheses_symbol",
+        "description": "Símbolo de apertura de paréntesis.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^\\)$",
+        "type": "close_parentheses_symbol",
+        "description": "Símbolo de cierre de paréntesis.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^\\{$",
+        "type": "open_brackets_symbol",
+        "description": "Símbolo de apertura de corchete.",
+        "scopable": true,
+        "close_symbol": "close_brackets_symbol"
+    },
+    {
+        "rule": "^\\}$",
+        "type": "close_brackets_symbol",
+        "description": "Símbolo de cierre de corchete.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^;$",
+        "type": "delimiter_semicolor",
+        "description": "Símbolo de delimitación, punto y coma.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^\\+\\+$",
+        "type": "increment_symbol",
+        "description": "Símbolo de cierre de corchete.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^>$",
+        "type": "greater_than_symbol",
+        "description": "Símbolo de mayor que.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^<$",
+        "type": "less_than_symbol",
+        "description": "Símbolo de menor que.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^(\"|')$",
+        "type": "indistinct_comilla_symbol",
+        "description": "Símbolo de comilla indistinto.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^“$",
+        "type": "open_comilla_symbol",
+        "description": "Símbolo de apertura de comilla.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
+        "rule": "^”$",
+        "type": "close_comilla_symbol",
+        "description": "Símbolo de cierre de comilla.",
+        "scopable": false,
+        "close_symbol": null
+    }
+]

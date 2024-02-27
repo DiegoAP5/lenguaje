@@ -4,16 +4,27 @@ import stack from "../modules/Lexer.js";
 import CodeMirror from "@uiw/react-codemirror";
 import icono from '../assets/images/reproducir.png'
 import Grammar from '../modules/Grammar.js';
+import symbols from '../data/symbols.json'
+import grammar from '../data/grammar.json'
 
 function App() {
 
   const [code, setCode] = useState("");
   const [stacks, setStacks] = useState([]);
-  const [isValid, setIsValid] = useState(undefined);
+  const [isValid, setIsValid] = useState("valid");
+  const [consoleMsg, setConsoleMsg] = useState("_")
+  const [consoleClass, setConsoleClass] = useState("")
+  const [areHeaderVisibles, setAreHeaderVisibles] = useState(false)
 
   const submitInputString = () => {
-    setStacks(stack(code));
-    const grammar_validator = new Grammar(null, stacks)
+    let result = stack(code, symbols)
+    setStacks(result);
+    setAreHeaderVisibles(result.length > 0)
+    const grammar_validator = new Grammar(grammar, result)
+    let [clazz,message,valid] = grammar_validator.check()
+    setConsoleClass(clazz)
+    setConsoleMsg(message)
+    setIsValid(valid)
   }
 
   return (
@@ -43,11 +54,17 @@ function App() {
       <div className="stacksContainer">
         <table>
           <tbody>
-            <tr>
-              <th>Lexema</th>
-              <th>Token</th>
-              <th>Descripción</th>
-            </tr>
+
+            {
+              areHeaderVisibles ? (
+                <tr>
+                  <th>Lexema</th>
+                  <th>Token</th>
+                  <th>Descripción</th>
+                </tr>
+              ) : (<></>)
+            }
+
             {
               stacks.map((element, index) => {
                 return (
@@ -68,6 +85,11 @@ function App() {
             }
           </tbody>
         </table>
+        <p className={`outconsole ${consoleClass}`}>
+          {
+            consoleMsg
+          }
+        </p>
       </div>
     </div>
   );

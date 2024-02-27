@@ -1,107 +1,8 @@
 class Lexer {
 
-  symbols = [
-    {
-      rule: /^var$/,
-      type: "variable_definition_keyword",
-      description: "Palabra reservada para declaración de variables.",
-    },
-    {
-      rule: /^fnc$/,
-      type: "function_definition_keyword",
-      description: "Palabra reservada para definición de función.",
-    },
-    {
-      rule: /^public$/,
-      type: "public_access_keyword",
-      description: "Palabra reservada para declarar acceso público.",
-    },
-    {
-      rule: /^si$/,
-      type: "if_statement_keyword",
-      description: "Palabra reservada para condicional if.",
-    },
-    {
-      rule: /^impr$/,
-      type: "output_print",
-      description: "Instrucción de impresión por pantalla.",
-    },
-    {
-      rule: /^for$/,
-      type: "for_loop_keyword",
-      description: "Palabra reservada para ciclos for.",
-    },
-    {
-      rule: /^=$/,
-      type: "asignation_symbol",
-      description: "Símbolo de asignación de valor.",
-    },
-    {
-      rule: /^[a-zA-Z][a-zA-Z0-9]*$/,
-      type: "entity_name",
-      description: "Nombre válido para funciones y variables.",
-    },
-    {
-      rule: /^\d+$/,
-      type: "integer_number",
-      description: "Número entero.",
-    },
-    {
-      rule: /^\($/,
-      type: "open_parentheses_symbol",
-      description: "Símbolo de apertura de paréntesis.",
-    },
-    {
-      rule: /^\)$/,
-      type: "close_parentheses_symbol",
-      description: "Símbolo de cierre de paréntesis.",
-    },
-    {
-      rule: /^\{$/,
-      type: "open_brackets_symbol",
-      description: "Símbolo de apertura de corchete.",
-    },
-    {
-      rule: /^\}$/,
-      type: "close_brackets_symbol",
-      description: "Símbolo de cierre de corchete.",
-    },
-    {
-      rule: /^;$/,
-      type: "delimiter_semicolor",
-      description: "Símbolo de delimitación, punto y coma.",
-    },
-    {
-      rule: /^\+\+$/,
-      type: "increment_symbol",
-      description: "Símbolo de cierre de corchete.",
-    },
-    {
-      rule: /^\>$/,
-      type: "greater_than_symbol",
-      description: "Símbolo de mayor que.",
-    },
-    {
-      rule: /^\<$/,
-      type: "less_than_symbol",
-      description: "Símbolo de menor que.",
-    },
-    {
-      rule: /^("|')$/,
-      type: "indistinct_comilla_symbol",
-      description: "Símbolo de comilla indistinto.",
-    },
-    {
-      rule: /^“$/,
-      type: "open_comilla_symbol",
-      description: "Símbolo de apertura de comilla.",
-    },
-    {
-      rule: /^”$/,
-      type: "close_comilla_symbol",
-      description: "Símbolo de cierre de comilla.",
-    },
-  ];
+  constructor(symbols_table) {
+    this.symbols = symbols_table
+  }
 
   validate(input) {
 
@@ -128,15 +29,16 @@ class Lexer {
       let lexemFound = false;
 
       for (const rule of this.symbols) {
-        if (rule.rule.test(lexem)) {
-          result.push([lexem, rule.type, rule.description, true, line_number + 1]);
+        let exp = new RegExp(rule.rule)
+        if (exp.test(lexem)) {
+          result.push([lexem, rule.type, rule.description, true, line_number + 1, rule.scopable, rule.close_symbol]);
           lexemFound = true;
           break;
         }
       }
 
       if (!lexemFound) {
-        result.push([lexem, "Unknown", "Sin coincidencia", false, line_number + 1]);
+        result.push([lexem, "Unknown", "Sin coincidencia", false, line_number + 1, false, null]);
       }
     }
 
@@ -144,8 +46,8 @@ class Lexer {
   }
 }
 
-export default function stack(inputString) {
-  const automata = new Lexer();
+export default function stack(inputString, symbols) {
+  const automata = new Lexer(symbols);
   const result = automata.validate(inputString);
   return result;
 }
