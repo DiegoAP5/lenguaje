@@ -12,29 +12,94 @@ div.stacksContainer {
 }
 
 p.outconsole {
+  cursor: default;
   font-size: 15px;
-  background: black;
-  width: calc(40vw - 16px* 2);
+  background: #141414;
+  width: calc(880px - (16px * 2));
   padding: 16px;
   margin: 0;
   font-family: monospace;
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+p.outconsole::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+p.outconsole::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+p.outconsole::-webkit-scrollbar-track:hover {
+  background: rgb(8, 8, 8);
+}
+
+/* Handle */
+p.outconsole::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: #2c2c2c;
+}
+
+/* Handle on hover */
+p.outconsole::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 p.outconsole::before {
   font-size: 15px;
-  content: "Output: ";
+  content: "Transpiler and interpreter output";
   font-weight: 600;
   margin-right: 7px;
+  margin-bottom: 12px;
+  color: #141414;
+  background-color: rgb(181, 181, 181);
+  padding: 1px 1px;
   display: inline-block;
-  color: rgb(252, 252, 252);
 }
 
-p.outconsole.success {
-  color: rgb(32, 209, 32);
+p.outconsole span {
+  /*:not(:first-child) {*/
+  display: block;
+  /* text-indent: 65px; */
 }
 
-p.outconsole.error {
-  color: rgb(209, 32, 32);
+p.outconsole span:last-child::after {
+  content: "_";
+  animation: blink 700ms infinite linear;
+}
+
+p.outconsole span.default {
+  color: rgb(184, 184, 184);
+}
+
+p.outconsole span.warn {
+  color: rgb(219, 142, 42);
+}
+
+p.outconsole span.success {
+  color: rgb(11 166 113);
+}
+
+p.outconsole span.section {
+  color: rgb(54, 77, 207);
+}
+
+p.outconsole span.final {
+  color: rgb(75, 222, 42);
+  font-weight: 700;
+}
+
+p.outconsole span.error {
+  margin-top: 14px;
+  color: rgb(255, 0, 0);
+  font-weight: 700;
+}
+
+p.outconsole span::selection {
+  background-color: rgb(218, 218, 218);
+  color: black;
 }
 
 .app {
@@ -89,8 +154,12 @@ p.outconsole.error {
   font: bold;
 }
 
+div.stacksContainer {
+  margin-top: 20px;
+}
+
 div.stacksContainer>table {
-  width: 40vw;
+  width: 880px;
   text-align: left;
   margin-bottom: 30px;
 }
@@ -114,4 +183,23 @@ div.stacksContainer>table>tbody>tr.error>td {
 
 div.stacksContainer>table>tbody>tr:nth-child(odd)>td {
   background-color: rgb(44, 40, 61);
+}
+
+span.details {
+  color: #5c5c5c;
+  text-indent: 30px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

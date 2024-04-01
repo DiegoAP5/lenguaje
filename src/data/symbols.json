@@ -7,6 +7,13 @@
         "close_symbol": null
     },
     {
+        "rule": "^call$",
+        "type": "call_function_keyword",
+        "description": "Palabra reservada para llamada de funciones.",
+        "scopable": false,
+        "close_symbol": null
+    },
+    {
         "rule": "^fnc$",
         "type": "function_definition_keyword",
         "description": "Palabra reservada para definición de función.",

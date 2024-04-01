@@ -1,6 +1,7 @@
-class Lexer {
+export default class Lexer {
 
   constructor(symbols_table) {
+    this.logs = []
     this.symbols = symbols_table
   }
 
@@ -8,7 +9,7 @@ class Lexer {
 
     let code_sample = input.split("\n")
     let res = []
-
+    this.logs.push(["Initializing lexical analyzer...", "default"])
     for (let i in code_sample) {
       let current_line = code_sample[i].replace(/\s+/g, " ")
         .replace(/(:|{|}|,|\(|\)|;|>|<|==|=|!=|\+\+|--|"|“|”|'|\+)/g, " $1 ")
@@ -19,6 +20,11 @@ class Lexer {
       res = res.concat(this.check_in_grammar(current_line, i))
     }
 
+    this.logs.push(
+      [
+        "Lexical analyzer completed.", "success"
+      ]
+    )
     return res;
   }
 
@@ -31,23 +37,25 @@ class Lexer {
       for (const rule of this.symbols) {
         let exp = new RegExp(rule.rule)
         if (exp.test(lexem)) {
-          result.push([lexem, rule.type, rule.description, true, line_number + 1, rule.scopable, rule.close_symbol]);
+          result.push({ LEXEM: lexem, ID: rule.type, DESCRIPTION: rule.description, IS_VALID: true, LINE_NUMBER: line_number + 1, IS_SCOPABLE: rule.scopable, CLOSE_SYMBOL: rule.close_symbol });
           lexemFound = true;
           break;
         }
       }
 
       if (!lexemFound) {
-        result.push([lexem, "Unknown", "Sin coincidencia", false, line_number + 1, false, null]);
+        this.logs.push([`Lexeme not identified.`, "warn"])
+        this.logs.push([`The lexeme >${lexem}< in line ${line_number + 1} could not be recognized.`, "details"])
+        this.logs.push([`An error has not been raised, it will be evaluated by the grammar analyzer.`, "details"])
+        result.push({ LEXEM: lexem, ID: "Unknown", DESCRIPTION: "Sin coincidencia", IS_VALID: false, LINE_NUMBER: line_number + 1, IS_SCOPABLE: false, CLOSE_SYMBOL: null });
       }
     }
 
+
     return result;
   }
-}
 
-export default function stack(inputString, symbols) {
-  const automata = new Lexer(symbols);
-  const result = automata.validate(inputString);
-  return result;
+  get_logs() {
+    return this.logs
+  }
 }

@@ -1,5 +1,3 @@
-const [LEXEM_INDEX, TYPE_INDEX, DESCRIPTION_INDEX, IS_VALID_INDEX, LINE_NUMBER_INDEX, IS_SCOPABLE_INDEX, CLOSE_SYMBOL_INDEX] = [0, 1, 2, 3, 4, 5]
-
 export default class Grammar {
     constructor(grammar_rules, tokens) {
         this.grammar = grammar_rules;
@@ -7,48 +5,59 @@ export default class Grammar {
         this.current_structure = null
         this.current_step = 0
         this.scope_debts = []
+        this.logs = []
     }
 
     check() {
+        const result = []
+        this.logs.push(["Initializing grammar analyzer...", "default"])
         for (let i in this.tokens) {
-            const token = this.tokens[i]
-
-            if (!token[IS_VALID_INDEX]) {
-                return this.__errorReponse(`Lexical error on ${token[LINE_NUMBER_INDEX]}: Illegal "${token[LEXEM_INDEX]}" token.`)
+            let token = this.tokens[i]
+            if (!token["IS_VALID"]) {
+                this.logs.push([`Lexical error: Illegal token.`, "error"])
+                this.logs.push([`In line 12 the token >${token["LEXEM"]}< does not belong to the language.`, "details"])
+                return this.__errorReponse(result)
             }
 
-            if (token[LEXEM_INDEX] === '}') {
+            if (token["LEXEM"] === '}') {
                 if (this.scope_debts.length === 0 || this.current_step > 0 || this.current_structure !== null) {
-                    return this.__errorReponse(`Syntax error on line ${token[LINE_NUMBER_INDEX]}: Token "${token[LEXEM_INDEX]}" unexpected.`)
+                    this.logs.push([`Syntax error: Token unexpected.`, "error"])
+                    this.logs.push([`on line ${token["LINE_NUMBER"]} token >${token["LEXEM"]}< unexpected.`, "details"])
+                    return this.__errorReponse(result)
                 }
                 this.scope_debts.shift()
                 continue;
             }
 
             if (this.current_structure == null) {
-                let res = this.__findStructure(token[TYPE_INDEX])
+                let res = this.__findStructure(token["ID"])
                 if (res) {
                     continue;
                 }
-                return this.__errorReponse(`Syntax error on line ${token[LINE_NUMBER_INDEX]}: Token "${token[LEXEM_INDEX]}" unknown.`)
+                // Esto puede causar problemas a futuro
+                this.logs.push([`Syntax error: Unrecognized instruction or token.`, "error"])
+                this.logs.push([`on line ${token["LINE_NUMBER"]} the token >${token["LEXEM"]}< is not recognized as an instruction or internal reference.`, "details"])
+                return this.__errorReponse(result)
             }
 
             let rule = this.grammar[this.current_structure][this.current_step]
 
-            let isValidToken = rule.includes(token[TYPE_INDEX])
+            let isValidToken = rule.includes(token["ID"])
 
 
             if (isValidToken) {
 
-                if (token[IS_SCOPABLE_INDEX]) {
-                    this.scope_debts.push(token[CLOSE_SYMBOL_INDEX]);
+                if (token["IS_SCOPABLE"]) {
+                    this.scope_debts.push(token["CLOSE_SYMBOL"]);
                     this.current_structure = null;
                     this.current_step = 0;
                     continue;
                 }
 
             } else {
-                return this.__errorReponse(`Syntax error on line ${token[LINE_NUMBER_INDEX]}: Token "${token[LEXEM_INDEX]}" unexpected. Expected ${this.__formatArrayToString(rule)}.`)
+                this.logs.push([`Syntax error: Token unexpected.`, "error"])
+                this.logs.push([`on line ${token["LINE_NUMBER"]} token >${token["LEXEM"]}< unexpected. Expected ${this.__formatArrayToString(rule)}.`, "details"])
+                return this.__errorReponse(result)
             }
 
             this.current_step++
@@ -56,14 +65,23 @@ export default class Grammar {
                 this.current_structure = null
                 this.current_step = 0
             }
+
+            result.push(token)
         }
 
         if (this.scope_debts.length > 0) {
-            return this.__errorReponse(`Syntax error at the end of the document: ${this.scope_debts.length} "}" characters are missing at the end.`)
+            this.logs.push([`Syntax error: characters are missing at the end.`, "error"])
+            this.logs.push([`at the end of the document: ${this.scope_debts.length} >}< characters are missing at the end.`, "details"])
+            return this.__errorReponse(result)
         }
 
-        return ["success", "The input string is valid.", true]
-
+        if (this.current_structure !== null) {
+            this.logs.push([`Syntax error: Incomplete instruction.`, "error"])
+            this.logs.push([`At the end of the document the following character was expected: ${this.__formatArrayToString(this.grammar[this.current_structure][this.current_step])}.`, "details"])
+            return this.__errorReponse(result)
+        }
+        this.logs.push(["Grammar analyzer completed.", "success"])
+        return { has_error: false, data: result }
     }
 
     __findStructure(toke_type) {
@@ -101,8 +119,11 @@ export default class Grammar {
 
     }
 
-    __errorReponse(message) {
-        console.error(message)
-        return ["error", message, false]
+    __errorReponse(data) {
+        return { has_error: true, data: data }
+    }
+
+    get_logs() {
+        return this.logs
     }
 }
