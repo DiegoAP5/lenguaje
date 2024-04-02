@@ -37,7 +37,7 @@ export default class Lexer {
       for (const rule of this.symbols) {
         let exp = new RegExp(rule.rule)
         if (exp.test(lexem)) {
-          result.push({ LEXEM: lexem, ID: rule.type, DESCRIPTION: rule.description, IS_VALID: true, LINE_NUMBER: line_number + 1, IS_SCOPABLE: rule.scopable, CLOSE_SYMBOL: rule.close_symbol });
+          result.push({ LEXEM: lexem, ID: rule.type, DESCRIPTION: rule.description, IS_VALID: true, LINE_NUMBER: line_number + 1 });
           lexemFound = true;
           break;
         }
@@ -47,7 +47,7 @@ export default class Lexer {
         this.logs.push([`Lexeme not identified.`, "warn"])
         this.logs.push([`The lexeme >${lexem}< in line ${line_number + 1} could not be recognized.`, "details"])
         this.logs.push([`An error has not been raised, it will be evaluated by the grammar analyzer.`, "details"])
-        result.push({ LEXEM: lexem, ID: "Unknown", DESCRIPTION: "Sin coincidencia", IS_VALID: false, LINE_NUMBER: line_number + 1, IS_SCOPABLE: false, CLOSE_SYMBOL: null });
+        result.push({ LEXEM: lexem, ID: "Unknown", DESCRIPTION: "Sin coincidencia", IS_VALID: false, LINE_NUMBER: line_number + 1 });
       }
     }
 

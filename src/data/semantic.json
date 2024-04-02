@@ -1,0 +1,41 @@
+{
+    "VARIABLES": [
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":true, "reference":false, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":true, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false}
+    ],
+    "FUNCION": [
+        {"registable":false, "reference":false, "scopable":true},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":true, "reference":false, "scopable":false}
+    ],
+    "CONDICION": [
+        {"registable":false, "reference":false, "scopable":true},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":true, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":true, "scopable":false}
+    ],
+    "FORLOOP":[
+        {"registable":false, "reference":false, "scopable":true},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":true, "reference":false, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":true, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":true, "scopable":false},
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":true, "scopable":false}
+    ],
+    "IMPRESION":[
+        
+    ],
+    "CALL_FUNCTION":[
+        {"registable":false, "reference":false, "scopable":false},
+        {"registable":false, "reference":true, "scopable":false}
+    ]
+}

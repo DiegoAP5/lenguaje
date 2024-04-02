@@ -84,17 +84,29 @@ p.outconsole span.success {
 
 p.outconsole span.section {
   color: rgb(54, 77, 207);
+  margin-bottom: 2px;
 }
 
 p.outconsole span.final {
-  color: rgb(75, 222, 42);
+  margin-top: 14px;
   font-weight: 700;
+  color: rgb(75, 222, 42);
+}
+
+p.outconsole span.notself {
+  color: rgb(149 149 149);
+  text-indent: 40px;
+}
+
+p.outconsole span.notself::before {
+  content: "> ";
+  font-weight: 600;
 }
 
 p.outconsole span.error {
   margin-top: 14px;
-  color: rgb(255, 0, 0);
   font-weight: 700;
+  color: rgb(255, 0, 0);
 }
 
 p.outconsole span::selection {

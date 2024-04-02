@@ -7,6 +7,7 @@ import icono from "../assets/images/reproducir.png";
 import Grammar from "../modules/Grammar.js";
 import symbols from "../data/symbols.json";
 import grammar from "../data/grammar.json";
+import Semantic from "../modules/Semantic.js";
 
 function App() {
   const [code, setCode] = useState("");
@@ -22,13 +23,15 @@ function App() {
     // ["Waiting for compilation...", "details"],
   ]
   );
+  const default_out_code = "// The intermediate code transpiled to javascript will be shown here."
   const [consoleClass, setConsoleClass] = useState("");
   const [interCode, setInterCode] = useState(
-    "/**\n The intermediate code transpiled to javascript will be shown here. \n*/"
+    default_out_code
   );
   const [areHeaderVisibles, setAreHeaderVisibles] = useState(false);
 
   const submitInputString = () => {
+    const init_time = Date.now()
 
     setConsoleMsg(prevConsoleMsg => [["Initiating...", "default"]]);
 
@@ -47,11 +50,29 @@ function App() {
     // console.log(grammar_result)
 
     if (grammar_result.has_error) {
-      setIsValid(grammar_result.has_error);
+      setInterCode(default_out_code)
       return
     }
 
-    console.log("Pasó")
+    const semantic = new Semantic(grammar_result)
+    const semantic_result = semantic.run()
+
+    setConsoleMsg(prevConsoleMsg => prevConsoleMsg.concat(semantic.get_logs()));
+
+    if (semantic_result.has_error) {
+      setInterCode(default_out_code)
+      return
+    }
+
+    setInterCode(semantic_result.code)
+    setConsoleMsg(prev => prev.concat([['Running your program...', 'section']]))
+    const run_result = eval(semantic_result.procesed_code);
+    if (run_result !== undefined) {
+      setConsoleMsg(prev => prev.concat(run_result))
+    } else {
+      setConsoleMsg(prev => prev.concat([["Your program has no console output.", "details"]]))
+    }
+    setConsoleMsg(prevConsoleMsg => prevConsoleMsg.concat([[`Program successfully executed in ${Date.now() - init_time}ms`, "final"]]));
 
     // let [clazz, message, valid] = grammar_validator.check();
     // setConsoleClass(clazz);
@@ -61,10 +82,10 @@ function App() {
   return (
     <div className="app">
       <h1 className="header">grntScript</h1>
-      <div className={`input-container ${isValid ? "valid" : "invalid"}`}>
+      <div className={`input-container`}>
         <CodeMirror
           theme={"dark"}
-          className="input"
+          // className="input"
           value={code}
           height="400px"
           width="880px"
@@ -96,7 +117,6 @@ function App() {
             )}
 
             {stacks.map((element, index) => {
-              console.log(element)
               return (
                 <tr className={!element["IS_VALID"] ? "error" : ""} key={index}>
                   <td>{element["LEXEM"]}</td>

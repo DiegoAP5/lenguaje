@@ -1,7 +1,7 @@
 export default class Grammar {
     constructor(grammar_rules, tokens) {
         this.grammar = grammar_rules;
-        this.tokens = tokens
+        this.tokens = JSON.parse(JSON.stringify(tokens))
         this.current_structure = null
         this.current_step = 0
         this.scope_debts = []
@@ -25,6 +25,9 @@ export default class Grammar {
                     this.logs.push([`on line ${token["LINE_NUMBER"]} token >${token["LEXEM"]}< unexpected.`, "details"])
                     return this.__errorReponse(result)
                 }
+                token["STRUCTURE"] = undefined
+                token["STEP"] = undefined
+                result.push(token)
                 this.scope_debts.shift()
                 continue;
             }
@@ -32,6 +35,10 @@ export default class Grammar {
             if (this.current_structure == null) {
                 let res = this.__findStructure(token["ID"])
                 if (res) {
+
+                    token["STRUCTURE"] = this.current_structure
+                    token["STEP"] = this.current_step - 1
+                    result.push(token)
                     continue;
                 }
                 // Esto puede causar problemas a futuro
@@ -47,7 +54,10 @@ export default class Grammar {
 
             if (isValidToken) {
 
-                if (token["IS_SCOPABLE"]) {
+                if (token["LEXEM"] == "{") {
+                    token["STRUCTURE"] = this.current_structure
+                    token["STEP"] = this.current_step
+                    result.push(token)
                     this.scope_debts.push(token["CLOSE_SYMBOL"]);
                     this.current_structure = null;
                     this.current_step = 0;
@@ -60,13 +70,15 @@ export default class Grammar {
                 return this.__errorReponse(result)
             }
 
+            token["STRUCTURE"] = this.current_structure
+            token["STEP"] = this.current_step
+            result.push(token)
             this.current_step++
             if (this.current_step >= this.grammar[this.current_structure].length) {
                 this.current_structure = null
                 this.current_step = 0
             }
 
-            result.push(token)
         }
 
         if (this.scope_debts.length > 0) {
