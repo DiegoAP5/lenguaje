@@ -1,0 +1,61 @@
+{
+    "VARIABLES": [
+        ["variable_definition_keyword"],
+        ["entity_name"],
+        ["asignation_symbol"],
+        ["entity_name","integer_number"],
+        ["delimiter_semicolor"]
+    ],
+    "FUNCION": [
+        ["public_access_keyword"],
+        ["function_definition_keyword"],
+        ["entity_name"],
+        ["open_parentheses_symbol"],
+        ["close_parentheses_symbol"],
+        ["open_brackets_symbol"],
+        ["close_brackets_symbol"]
+    ],
+    "CONDICION": [
+        ["if_statement_keyword"],
+        ["open_parentheses_symbol"],
+        ["integer_number","entity_name"],
+        ["greater_than_symbol","less_than_symbol"],
+        ["integer_number","entity_name"],
+        ["close_parentheses_symbol"],
+        ["open_brackets_symbol"],
+        ["close_brackets_symbol"]
+    ],
+    "FORLOOP":[
+        ["for_loop_keyword"],
+        ["open_parentheses_symbol"],
+        ["entity_name"],
+        ["asignation_symbol"],
+        ["integer_number"],
+        ["delimiter_semicolor"],
+        ["integer_number","entity_name"],
+        ["greater_than_symbol","less_than_symbol"],
+        ["integer_number","entity_name"],
+        ["delimiter_semicolor"],
+        ["entity_name"],
+        ["increment_symbol"],
+        ["close_parentheses_symbol"],
+        ["open_brackets_symbol"],
+        ["close_brackets_symbol"]
+    ],
+    "IMPRESION":[
+        ["output_print"],
+        ["open_parentheses_symbol"],
+        ["indistinct_comilla_symbol","open_comilla_symbol"],
+        ["entity_name"],
+        ["indistinct_comilla_symbol","close_comilla_symbol"],
+        ["close_parentheses_symbol"],
+        ["delimiter_semicolor"]
+    ],
+    "CALL_FUNCTION":[
+        ["call_function_keyword"],
+        ["entity_name"],
+        ["open_parentheses_symbol"],
+        ["close_parentheses_symbol"],
+        ["delimiter_semicolor"]
+    ]
+}

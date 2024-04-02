@@ -1,0 +1,219 @@
+body {
+  margin: 0px;
+}
+
+div.stacksContainer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 16px;
+  flex-direction: column-reverse;
+}
+
+p.outconsole {
+  cursor: default;
+  font-size: 15px;
+  background: #141414;
+  width: calc(880px - (16px * 2));
+  padding: 16px;
+  margin: 0;
+  font-family: monospace;
+  max-height: 250px;
+  height: 250px;
+  overflow-y: scroll;
+}
+
+p.outconsole::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+p.outconsole::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+p.outconsole::-webkit-scrollbar-track:hover {
+  background: rgb(8, 8, 8);
+}
+
+/* Handle */
+p.outconsole::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: #2c2c2c;
+}
+
+/* Handle on hover */
+p.outconsole::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+p.outconsole::before {
+  font-size: 15px;
+  content: "Transpiler and interpreter output";
+  font-weight: 600;
+  margin-right: 7px;
+  margin-bottom: 12px;
+  color: #141414;
+  background-color: rgb(181, 181, 181);
+  padding: 1px 1px;
+  display: inline-block;
+}
+
+p.outconsole span {
+  /*:not(:first-child) {*/
+  display: block;
+  /* text-indent: 65px; */
+}
+
+p.outconsole span:last-child::after {
+  content: "_";
+  animation: blink 700ms infinite linear;
+}
+
+p.outconsole span.default {
+  color: rgb(184, 184, 184);
+}
+
+p.outconsole span.warn {
+  color: rgb(219, 142, 42);
+}
+
+p.outconsole span.success {
+  margin-bottom: 20px;
+  color: rgb(11 166 113);
+}
+
+p.outconsole span.section {
+  color: rgb(54, 77, 207);
+  margin-bottom: 2px;
+}
+
+p.outconsole span.final {
+  margin-top: 14px;
+  font-weight: 700;
+  color: rgb(75, 222, 42);
+}
+
+p.outconsole span.notself {
+  color: rgb(149 149 149);
+  text-indent: 40px;
+}
+
+p.outconsole span.notself::before {
+  content: "> ";
+  font-weight: 600;
+}
+
+p.outconsole span.error {
+  margin-top: 14px;
+  font-weight: 700;
+  color: rgb(255, 0, 0);
+}
+
+p.outconsole span::selection {
+  background-color: rgb(218, 218, 218);
+  color: black;
+}
+
+.app {
+  background-color: #1e1e1e;
+  color: #dcdcdc;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.header {
+  color: #f4f4f4;
+  margin: 20px 0;
+  font-size: 2rem;
+}
+
+.textarea {
+  background: #1e1e1e;
+  border: 1px green;
+  box-shadow: 0 0 8px green;
+  color: #dcdcdc;
+  border: 1px solid #3c3c3c;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 16px;
+  padding: 10px;
+  width: 80%;
+  min-height: 300px;
+  line-height: 1.5;
+  margin: 10px 0;
+  resize: none;
+  overflow: auto;
+  border-radius: 4px;
+}
+
+.valid-message {
+  color: green;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 20px;
+}
+
+.textarea-invalid {
+  border-color: #7B0D1E;
+  box-shadow: 0 0 8px #7B0D1E;
+}
+
+.error-message {
+  color: #ED1C24;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 20px;
+  font: bold;
+}
+
+div.stacksContainer {
+  margin-top: 20px;
+}
+
+div.stacksContainer>table {
+  width: 880px;
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+div.stacksContainer>table>tbody>tr>th {
+  background-color: rgb(49, 58, 93);
+}
+
+div.stacksContainer>table>tbody>tr>td {
+  padding: 10px 5px;
+  font-size: 16px;
+}
+
+div.stacksContainer>table>tbody>tr:nth-child(even)>td {
+  background-color: rgb(53, 56, 69);
+}
+
+div.stacksContainer>table>tbody>tr.error>td {
+  background-color: rgb(208, 52, 52) !important;
+}
+
+div.stacksContainer>table>tbody>tr:nth-child(odd)>td {
+  background-color: rgb(44, 40, 61);
+}
+
+span.details {
+  color: #5c5c5c;
+  text-indent: 30px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
