@@ -1,5 +1,5 @@
 import "../assets/styles/App.css";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Lexer from '../modules/Lexer.js'
 import CodeMirror from "@uiw/react-codemirror";
 import { langs } from '@uiw/codemirror-extensions-langs';
@@ -14,13 +14,7 @@ function App() {
   const [stacks, setStacks] = useState([]);
   const [isValid, setIsValid] = useState("valid");
   const [consoleMsg, setConsoleMsg] = useState([
-    ["Waiting for execution", "default"],
-    // ["Waiting for compilation...", "success"],
-    // ["Waiting for compilation...", "warn"],
-    // ["Waiting for compilation...", "error"],
-    // ["Waiting for compilation...", "section"],
-    // ["Waiting for compilation...", "final"],
-    // ["Waiting for compilation...", "details"],
+    ["Waiting for execution", "default"]
   ]
   );
   const default_out_code = "// The intermediate code transpiled to javascript will be shown here."
@@ -29,6 +23,19 @@ function App() {
     default_out_code
   );
   const [areHeaderVisibles, setAreHeaderVisibles] = useState(false);
+
+  const consoleRef = useRef(null);
+
+
+  const scrollToBottom = () => {
+    if (consoleRef.current) {
+      consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  });
 
   const submitInputString = () => {
     const init_time = Date.now()
@@ -136,7 +143,7 @@ function App() {
           style={{ cursor: 'default' }}
           extensions={[langs.javascript()]}
         />
-        <p className={`outconsole ${consoleClass}`}>
+        <p className={`outconsole ${consoleClass}`} ref={consoleRef}>
           {render_msgs(consoleMsg)}
         </p>
       </div>

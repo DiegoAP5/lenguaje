@@ -19,7 +19,7 @@ export default class Translator {
      */
     cure(code, maximum_calls = 30) {
 
-        if(code.length === 192){
+        if (code.length === 192) {
             return '// You have to write your code first...'
         }
 
@@ -30,11 +30,11 @@ export default class Translator {
         result_code += `const print = (message) =>{logs.push([ message, "notself"])}\n`
 
         if (code.includes("//@CHECKER")) {
-            result_code += `let MAXIMUM_CALL = ${maximum_calls};\n`
+            result_code += `let MAXIMUM_CALL = ${maximum_calls};\n\nconst is_overflowed = () => {\n  if (MAXIMUM_CALL <= 0) {\n    MAXIMUM_CALL = 30;\n    error(\n        "Sandbox runtime overflow warning: Iteration overflow",\n        "Your iteration loop has exceeded the maximum iteration limit of the sandbox."\n    );\n      return true\n  }\n  MAXIMUM_CALL--\n  return false;\n}\n`
         }
-        result_code += code.replace("//@CHECKER", `if(MAXIMUM_CALL <= 0){MAXIMUM_CALL = ${maximum_calls}; error("Sandbox runtime overflow warning: Iteration overflow","Your iteration loop has exceeded the maximum iteration limit of the sandbox."); break} MAXIMUM_CALL--\n`)
+        result_code += code.replace(/\/\/\s*@CHECKER/g, 'if(is_overflowed()) break;\n')
             .replace(/console\.log/g, 'print')
-        .replace(/\/\*[\s\S]*?\*\//g, '\n// Your code starts here...\n// Note: console.log() have been replaced by print().');
+            .replace(/\/\*[\s\S]*?\*\//g, '\n// Your code starts here...\n// Note: console.log() have been replaced by print().');
         result_code += '// Your code ends here.\n'
         result_code += '\nlogs;\n}'
         return result_code

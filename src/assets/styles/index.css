@@ -20,6 +20,7 @@ p.outconsole {
   margin: 0;
   font-family: monospace;
   max-height: 250px;
+  height: 250px;
   overflow-y: scroll;
 }
 
@@ -79,6 +80,7 @@ p.outconsole span.warn {
 }
 
 p.outconsole span.success {
+  margin-bottom: 20px;
   color: rgb(11 166 113);
 }
 
