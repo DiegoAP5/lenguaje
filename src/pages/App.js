@@ -67,7 +67,7 @@ function App() {
     setInterCode(semantic_result.code)
     setConsoleMsg(prev => prev.concat([['Running your program...', 'section']]))
     const run_result = eval(semantic_result.procesed_code);
-    if (run_result !== undefined) {
+    if (run_result !== undefined && run_result.length != 0) {
       setConsoleMsg(prev => prev.concat(run_result))
     } else {
       setConsoleMsg(prev => prev.concat([["Your program has no console output.", "details"]]))
